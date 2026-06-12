@@ -92,7 +92,15 @@ button.danger:hover{background:#3d1515}
 .reality-banner.vortox-active { background: #401010; border-color: #d66f6f; }
 
 /* Structural Cards */
-.circle-wrap{position:relative;width:320px;height:320px;margin:0 auto;overflow:hidden;display:block}
+.circle-wrap{
+  position:relative;
+  width:320px;
+  height:320px;
+  margin:0 auto;
+  overflow:hidden;
+  display:block;
+  padding:0;
+}
 .circle-wrap .token{transform:translate(-50%,-50%)}
 .token{position:absolute;display:flex;flex-direction:column;align-items:center;gap:3px;transform:translate(-50%,-50%)}
 .token-circle{width:44px;height:44px;border-radius:50%;border:1.5px solid #8a5f28;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;text-align:center;line-height:1.2;padding:2px;background:#2e1c08;color:#e8d5b0}
