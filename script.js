@@ -62,7 +62,7 @@ function renderCircle(containerId, clickable){
 
   var cx = rect.width / 2;
   var cy = rect.height / 2;
-  var r = Math.min(rect.width, rect.height) / 2 - 40;
+  var r = Math.min(rect.width, rect.height) / 2 - 50;
 
   players.forEach(function(p, i){
     var angle = (2 * Math.PI * i / n) - Math.PI / 2;
@@ -142,17 +142,16 @@ function toggleVortexReality() {
 
   var btn = document.getElementById('vortox-btn');
   var banner = document.getElementById('reality-banner-label');
+  var realityBanner = document.getElementById('reality-banner');
 
   if (vortoxMode) {
     if(btn) btn.textContent = 'Return to Normal';
     if (banner) banner.innerHTML = '🔮 Logic Reality: <strong>VORTOX WORLD (Townsfolk info MUST be false)</strong>';
-    var realityBanner = document.getElementById('reality-banner');
     if (realityBanner) realityBanner.classList.add('vortox-active');
   } else {
     if(btn) btn.textContent = 'Split Reality (Vortox)';
     if (banner) banner.innerHTML = '🔮 Logic Reality: <strong>Standard Rules</strong>';
-    var realityBanner2 = document.getElementById('reality-banner');
-    if (realityBanner2) realityBanner2.classList.remove('vortox-active');
+    if (realityBanner) realityBanner.classList.remove('vortox-active');
   }
 
   renderEmpathToday();
@@ -194,13 +193,8 @@ function nextDay() {
   renderJugglerHistory();
 }
 
-function showClearModal(){
-  show('clear-modal');
-}
-
-function hideClearModal(){
-  hide('clear-modal');
-}
+function showClearModal(){ show('clear-modal'); }
+function hideClearModal(){ hide('clear-modal'); }
 
 function clearKeepPlayers(){
   hideClearModal();
@@ -239,13 +233,15 @@ function clearEditPlayers(){
   renderCircle('circle-setup', false);
 }
 
+// Master Workspace Tab Router Engine
 function switchTab(targetTabId) {
   document.querySelectorAll('.tab-content').forEach(function(el) { el.classList.add('hidden'); });
   document.querySelectorAll('.tab-btn').forEach(function(el) { el.classList.remove('active'); });
-
+  
   document.getElementById(targetTabId).classList.remove('hidden');
   document.getElementById('btn-' + targetTabId).classList.add('active');
-
+  
+  // Refresh and bind dropdown elements dynamically
   if(targetTabId === 'tab-noms') {
     ['sel-nominator','sel-nominee'].forEach(populateSelect);
   } else if(targetTabId === 'tab-empath') {
@@ -281,26 +277,24 @@ function populateSelect(selectId) {
 
 function generateJugglerInputs() {
   var container = document.getElementById('juggler-guesses-inputs');
-  if(!container) return;
-
   container.innerHTML = '';
   for(var i = 1; i <= 5; i++) {
     var line = document.createElement('div');
     line.className = 'flex';
     line.style.gap = '10px';
-
+    
     var pSel = document.createElement('select');
     pSel.id = 'jug-p-' + i;
     pSel.innerHTML = '<option value="">-- Target Player --</option>';
     players.forEach(function(p){
       pSel.innerHTML += '<option value="'+p.id+'">'+p.name+'</option>';
     });
-
+    
     var rInp = document.createElement('input');
     rInp.type = 'text';
     rInp.id = 'jug-r-' + i;
     rInp.placeholder = 'Guessed Role (e.g., Empath)';
-
+    
     line.appendChild(pSel);
     line.appendChild(rInp);
     container.appendChild(line);
@@ -318,18 +312,18 @@ function startGame(){
   jugglerToday = []; jugglerHistory = [];
   savantGrid = {};
   vortoxMode = false;
-
+  
   showPhase('phase-track');
   document.getElementById('global-day-header').textContent = 'Day 1';
   var btn = document.getElementById('vortox-btn');
   var banner = document.getElementById('reality-banner-label');
+  var realityBanner = document.getElementById('reality-banner');
   if(btn) btn.textContent = 'Split Reality (Vortox)';
   if (banner) banner.innerHTML = '🔮 Logic Reality: <strong>Standard Rules</strong>';
-  var realityBanner = document.getElementById('reality-banner');
   if (realityBanner) realityBanner.classList.remove('vortox-active');
 
   renderCircle('circle-track', true);
-
+  
   generateJugglerInputs();
   switchTab('tab-noms');
   renderNomList();
@@ -376,7 +370,7 @@ function renderSummary(){
   var nomGroup = document.getElementById('summary-nominators');
   var voteGroup = document.getElementById('summary-voters');
   if(!daily || !nomGroup || !voteGroup) return;
-
+  
   if(!nominationsToday.length){ hide('daily-summary'); return; }
   show('daily-summary');
   var nomSet = {}, voteSet = {};
@@ -424,7 +418,7 @@ function getAliveNeighbors(centerId) {
   var numPlayers = players.length;
   var leftNeighbor = null, rightNeighbor = null;
   var centerIndex = players.findIndex(function(p) { return p.id === centerId; });
-
+  
   for(var i = 1; i < numPlayers; i++) {
     var checkIndex = (centerIndex - i + numPlayers) % numPlayers;
     if(players[checkIndex].alive) { leftNeighbor = players[checkIndex]; break; }
@@ -458,7 +452,7 @@ function renderEmpathToday() {
     var neighbors = getAliveNeighbors(e.empathId);
     var leftName = neighbors.left ? neighbors.left.name : 'None';
     var rightName = neighbors.right ? neighbors.right.name : 'None';
-
+    
     var div = document.createElement('div');
     div.className = 'ledger-item';
     div.innerHTML = '<strong>' + getPlayerName(e.empathId) + '</strong> claimed a token score of <strong>' + e.val + '</strong><br>' +
@@ -482,7 +476,7 @@ function renderEmpathHistory() {
       var neighbors = getAliveNeighbors(e.empathId);
       var leftName = neighbors.left ? neighbors.left.name : 'None';
       var rightName = neighbors.right ? neighbors.right.name : 'None';
-
+      
       var inner = document.createElement('div');
       inner.style.marginBottom = '8px';
       inner.innerHTML = '<strong>' + getPlayerName(e.empathId) + '</strong> got a <strong>' + e.val + '</strong> ' +

@@ -41,7 +41,7 @@
     
     <div class="global-status-bar">
       <div class="card reality-banner" id="reality-banner" style="margin: 0; flex: 1;">
-        <span>🔮 Logic Reality: <strong>Standard Rules</strong></span>
+        <span id="reality-banner-label">🔮 Logic Reality: <strong>Standard Rules</strong></span>
         <button onclick="toggleVortexReality()" id="vortox-btn">Split Reality (Vortox)</button>
       </div>
       <div class="card global-day-card">
@@ -163,8 +163,7 @@
               <div style="flex: 1; padding-top: 15px; color: #9a7d4a; font-size: 12px;">Fill out up to 5 guess statements below. Leaving fields empty is fine.</div>
             </div>
             
-            <div class="flex-col" id="juggler-guesses-inputs" style="gap: 8px; margin-bottom: 1.25rem;">
-              </div>
+            <div class="flex-col" id="juggler-guesses-inputs" style="gap: 8px; margin-bottom: 1.25rem;"></div>
             <button class="primary" onclick="addJugglerClaim()" style="width: 100%">Log Juggling Event</button>
           </div>
           <br>
