@@ -52,8 +52,18 @@ function isVoter(pid){ return pendingVoters.indexOf(pid) !== -1; }
 
 function renderCircle(containerId, clickable){
   var c = document.getElementById(containerId);
+  if(!c) return;
+
   c.innerHTML = '';
-  var n = players.length, r = 120, cx = 160, cy = 160;
+
+  var rect = c.getBoundingClientRect();
+  var n = players.length;
+  if(!n) return;
+
+  var cx = rect.width / 2;
+  var cy = rect.height / 2;
+  var r = Math.min(rect.width, rect.height) / 2 - 40;
+
   players.forEach(function(p, i){
     var angle = (2 * Math.PI * i / n) - Math.PI / 2;
     var x = cx + r * Math.cos(angle);
@@ -71,7 +81,7 @@ function renderCircle(containerId, clickable){
     circ.className = 'token-circle' + (clickable ? ' clickable' : '');
     circ.textContent = initials;
     circ.setAttribute('data-initials', initials);
-    
+
     if(!p.alive) { circ.style.opacity = '0.35'; circ.style.borderStyle = 'dashed'; }
 
     var nameEl = document.createElement('div');
@@ -81,17 +91,19 @@ function renderCircle(containerId, clickable){
 
     if(clickable){
       tok.style.cursor = 'pointer';
-      let pid = p.id;
-      
+      var pid = p.id;
+
       tok.onclick = function(){ toggleVoter(pid); };
       tok.oncontextmenu = function(e) {
         e.preventDefault();
         players[pid].alive = !players[pid].alive;
         renderCircle('circle-track', true);
-        
-        // Live cascade updates to open tabs
         renderEmpathToday();
         renderEmpathHistory();
+        renderGossipToday();
+        renderGossipHistory();
+        renderJugglerToday();
+        renderJugglerHistory();
       };
     }
 
@@ -120,6 +132,7 @@ function toggleVoter(pid){
 
 function updateVoterPreview(){
   var el = document.getElementById('voter-preview');
+  if(!el) return;
   if(!pendingVoters.length){ el.textContent = 'No voters selected — click tokens above'; return; }
   el.textContent = 'Voters: ' + pendingVoters.map(function(id){ return getPlayerName(id); }).join(', ');
 }
@@ -128,23 +141,25 @@ function toggleVortexReality() {
   vortoxMode = !vortoxMode;
 
   var btn = document.getElementById('vortox-btn');
-  var banner = document.getElementById('reality-banner');
+  var banner = document.getElementById('reality-banner-label');
 
   if (vortoxMode) {
-    btn.textContent = 'Split Reality: ON';
-    if (banner) banner.classList.add('vortox-active');
+    if(btn) btn.textContent = 'Return to Normal';
+    if (banner) banner.innerHTML = '🔮 Logic Reality: <strong>VORTOX WORLD (Townsfolk info MUST be false)</strong>';
+    var realityBanner = document.getElementById('reality-banner');
+    if (realityBanner) realityBanner.classList.add('vortox-active');
   } else {
-    btn.textContent = 'Split Reality (Vortox)';
-    if (banner) banner.classList.remove('vortox-active');
+    if(btn) btn.textContent = 'Split Reality (Vortox)';
+    if (banner) banner.innerHTML = '🔮 Logic Reality: <strong>Standard Rules</strong>';
+    var realityBanner2 = document.getElementById('reality-banner');
+    if (realityBanner2) realityBanner2.classList.remove('vortox-active');
   }
 
-  // Refresh any visible Empath-related text if needed
   renderEmpathToday();
   renderEmpathHistory();
 }
 
 function nextDay() {
-  // Save current day data into history
   if (nominationsToday.length) {
     nominationsHistory.push({ day: day, items: nominationsToday.slice() });
   }
@@ -158,7 +173,6 @@ function nextDay() {
     jugglerHistory.push({ day: day, items: jugglerToday.slice() });
   }
 
-  // Advance day
   day += 1;
   pendingVoters = [];
   nominationsToday = [];
@@ -166,7 +180,6 @@ function nextDay() {
   gossipToday = [];
   jugglerToday = [];
 
-  // Update UI
   document.getElementById('global-day-header').textContent = 'Day ' + day;
   renderCircle('circle-track', true);
   updateVoterPreview();
@@ -181,15 +194,58 @@ function nextDay() {
   renderJugglerHistory();
 }
 
-// Master Workspace Tab Router Engine
+function showClearModal(){
+  show('clear-modal');
+}
+
+function hideClearModal(){
+  hide('clear-modal');
+}
+
+function clearKeepPlayers(){
+  hideClearModal();
+  day = 1;
+  pendingVoters = [];
+  nominationsToday = []; nominationsHistory = [];
+  empathToday = []; empathHistory = [];
+  gossipToday = []; gossipHistory = [];
+  jugglerToday = []; jugglerHistory = [];
+  savantGrid = {};
+  document.getElementById('global-day-header').textContent = 'Day 1';
+  renderCircle('circle-track', true);
+  updateVoterPreview();
+  renderNomList();
+  renderSummary();
+  renderNomHistory();
+  renderEmpathToday();
+  renderEmpathHistory();
+  renderGossipToday();
+  renderGossipHistory();
+  renderJugglerToday();
+  renderJugglerHistory();
+}
+
+function clearEditPlayers(){
+  hideClearModal();
+  day = 1;
+  pendingVoters = [];
+  nominationsToday = []; nominationsHistory = [];
+  empathToday = []; empathHistory = [];
+  gossipToday = []; gossipHistory = [];
+  jugglerToday = []; jugglerHistory = [];
+  savantGrid = {};
+  showPhase('phase-setup');
+  renderNameInputs();
+  renderCircle('circle-setup', false);
+}
+
 function switchTab(targetTabId) {
   document.querySelectorAll('.tab-content').forEach(function(el) { el.classList.add('hidden'); });
   document.querySelectorAll('.tab-btn').forEach(function(el) { el.classList.remove('active'); });
-  
+
   document.getElementById(targetTabId).classList.remove('hidden');
   document.getElementById('btn-' + targetTabId).classList.add('active');
-  
-  // Refresh and bind dropdown elements dynamically
+
   if(targetTabId === 'tab-noms') {
     ['sel-nominator','sel-nominee'].forEach(populateSelect);
   } else if(targetTabId === 'tab-empath') {
@@ -220,29 +276,31 @@ function populateSelect(selectId) {
     o.textContent = p.name + (!p.alive ? ' (Dead)' : '');
     s.appendChild(o);
   });
-  if(currentSelection) s.value = currentSelection;
+  if(currentSelection !== '') s.value = currentSelection;
 }
 
 function generateJugglerInputs() {
   var container = document.getElementById('juggler-guesses-inputs');
+  if(!container) return;
+
   container.innerHTML = '';
   for(var i = 1; i <= 5; i++) {
     var line = document.createElement('div');
     line.className = 'flex';
     line.style.gap = '10px';
-    
+
     var pSel = document.createElement('select');
     pSel.id = 'jug-p-' + i;
     pSel.innerHTML = '<option value="">-- Target Player --</option>';
     players.forEach(function(p){
       pSel.innerHTML += '<option value="'+p.id+'">'+p.name+'</option>';
     });
-    
+
     var rInp = document.createElement('input');
     rInp.type = 'text';
     rInp.id = 'jug-r-' + i;
     rInp.placeholder = 'Guessed Role (e.g., Empath)';
-    
+
     line.appendChild(pSel);
     line.appendChild(rInp);
     container.appendChild(line);
@@ -259,11 +317,19 @@ function startGame(){
   gossipToday = []; gossipHistory = [];
   jugglerToday = []; jugglerHistory = [];
   savantGrid = {};
-  
+  vortoxMode = false;
+
   showPhase('phase-track');
   document.getElementById('global-day-header').textContent = 'Day 1';
+  var btn = document.getElementById('vortox-btn');
+  var banner = document.getElementById('reality-banner-label');
+  if(btn) btn.textContent = 'Split Reality (Vortox)';
+  if (banner) banner.innerHTML = '🔮 Logic Reality: <strong>Standard Rules</strong>';
+  var realityBanner = document.getElementById('reality-banner');
+  if (realityBanner) realityBanner.classList.remove('vortox-active');
+
   renderCircle('circle-track', true);
-  
+
   generateJugglerInputs();
   switchTab('tab-noms');
   renderNomList();
@@ -293,6 +359,7 @@ function addNomination(){
 
 function renderNomList(){
   var c = document.getElementById('nom-list');
+  if(!c) return;
   if(!nominationsToday.length){ c.innerHTML = '<div style="color:#5a3d18;font-size:13px;text-align:center;padding:1rem">No nominations logged yet</div>'; return; }
   c.innerHTML = '';
   nominationsToday.forEach(function(n){
@@ -305,6 +372,11 @@ function renderNomList(){
 }
 
 function renderSummary(){
+  var daily = document.getElementById('daily-summary');
+  var nomGroup = document.getElementById('summary-nominators');
+  var voteGroup = document.getElementById('summary-voters');
+  if(!daily || !nomGroup || !voteGroup) return;
+
   if(!nominationsToday.length){ hide('daily-summary'); return; }
   show('daily-summary');
   var nomSet = {}, voteSet = {};
@@ -312,13 +384,14 @@ function renderSummary(){
     nomSet[n.nominator] = true;
     n.voters.forEach(function(v){ voteSet[v] = true; });
   });
-  document.getElementById('summary-nominators').innerHTML = Object.keys(nomSet).map(function(id){ return '<div class="pill">'+getPlayerName(parseInt(id))+'</div>'; }).join('');
+  nomGroup.innerHTML = Object.keys(nomSet).map(function(id){ return '<div class="pill">'+getPlayerName(parseInt(id))+'</div>'; }).join('');
   var vkeys = Object.keys(voteSet);
-  document.getElementById('summary-voters').innerHTML = vkeys.length ? vkeys.map(function(id){ return '<div class="pill">'+getPlayerName(parseInt(id))+'</div>'; }).join('') : '<span style="color:#5a3d18;font-size:12px">Nobody voted</span>';
+  voteGroup.innerHTML = vkeys.length ? vkeys.map(function(id){ return '<div class="pill">'+getPlayerName(parseInt(id))+'</div>'; }).join('') : '<span style="color:#5a3d18;font-size:12px">Nobody voted</span>';
 }
 
 function renderNomHistory() {
   var c = document.getElementById('nom-history-list');
+  if(!c) return;
   if(!nominationsHistory.length) { hide('nom-history-card'); return; }
   show('nom-history-card');
   c.innerHTML = '';
@@ -351,7 +424,7 @@ function getAliveNeighbors(centerId) {
   var numPlayers = players.length;
   var leftNeighbor = null, rightNeighbor = null;
   var centerIndex = players.findIndex(function(p) { return p.id === centerId; });
-  
+
   for(var i = 1; i < numPlayers; i++) {
     var checkIndex = (centerIndex - i + numPlayers) % numPlayers;
     if(players[checkIndex].alive) { leftNeighbor = players[checkIndex]; break; }
@@ -378,13 +451,14 @@ function computeEmpathDeductionText(val) {
 
 function renderEmpathToday() {
   var container = document.getElementById('empath-today-list');
+  if(!container) return;
   if(!empathToday.length) { container.innerHTML = '<div style="color:#5a3d18; text-align:center; padding:1rem">No Empath information recorded today.</div>'; return; }
   container.innerHTML = '';
   empathToday.forEach(function(e) {
     var neighbors = getAliveNeighbors(e.empathId);
     var leftName = neighbors.left ? neighbors.left.name : 'None';
     var rightName = neighbors.right ? neighbors.right.name : 'None';
-    
+
     var div = document.createElement('div');
     div.className = 'ledger-item';
     div.innerHTML = '<strong>' + getPlayerName(e.empathId) + '</strong> claimed a token score of <strong>' + e.val + '</strong><br>' +
@@ -396,6 +470,7 @@ function renderEmpathToday() {
 
 function renderEmpathHistory() {
   var container = document.getElementById('empath-history-list');
+  if(!container) return;
   if(!empathHistory.length) { hide('empath-history-card'); return; }
   show('empath-history-card');
   container.innerHTML = '';
@@ -407,7 +482,7 @@ function renderEmpathHistory() {
       var neighbors = getAliveNeighbors(e.empathId);
       var leftName = neighbors.left ? neighbors.left.name : 'None';
       var rightName = neighbors.right ? neighbors.right.name : 'None';
-      
+
       var inner = document.createElement('div');
       inner.style.marginBottom = '8px';
       inner.innerHTML = '<strong>' + getPlayerName(e.empathId) + '</strong> got a <strong>' + e.val + '</strong> ' +
@@ -434,6 +509,7 @@ function addGossipClaim() {
 
 function renderGossipToday() {
   var container = document.getElementById('gossip-today-list');
+  if(!container) return;
   if(!gossipToday.length) { container.innerHTML = '<div style="color:#5a3d18; text-align:center; padding:1rem">No gossips spoken today.</div>'; return; }
   container.innerHTML = gossipToday.map(function(g) {
     return '<div class="ledger-item"><strong>' + getPlayerName(g.playerId) + '</strong>: "' + g.statement + '"</div>';
@@ -442,20 +518,34 @@ function renderGossipToday() {
 
 function renderGossipHistory() {
   var container = document.getElementById('gossip-history-list');
+  if(!container) return;
   if(!gossipHistory.length) { hide('gossip-history-card'); return; }
+  show('gossip-history-card');
+  container.innerHTML = '';
+  gossipHistory.slice().reverse().forEach(function(h) {
+    var wrapper = document.createElement('div');
+    wrapper.className = 'day-history-container';
+    wrapper.innerHTML = '<div class="day-history-title">Day ' + h.day + '</div>';
+    h.items.forEach(function(g) {
+      var inner = document.createElement('div');
+      inner.style.marginBottom = '8px';
+      inner.innerHTML = '<strong>' + getPlayerName(g.playerId) + '</strong>: "' + g.statement + '"';
+      wrapper.appendChild(inner);
+    });
+    container.appendChild(wrapper);
+  });
 }
 
-
 // ==========================================
-// MODULE 3: JUGGLER CLAIMS
+// MODULE 4: JUGGLER CLAIMS
 // ==========================================
 function addJugglerClaim() {
   var jugglerId = parseInt(document.getElementById('juggler-player').value);
 
   var guesses = [];
   for (var i = 1; i <= 5; i++) {
-    var targetVal = document.getElementById('jug-p-' + i)?.value;
-    var roleVal = document.getElementById('jug-r-' + i)?.value.trim();
+    var targetVal = document.getElementById('jug-p-' + i).value;
+    var roleVal = document.getElementById('jug-r-' + i).value.trim();
 
     if (targetVal !== "" || roleVal !== "") {
       guesses.push({
@@ -470,11 +560,18 @@ function addJugglerClaim() {
     guesses: guesses
   });
 
+  for (var j = 1; j <= 5; j++) {
+    document.getElementById('jug-p-' + j).value = "";
+    document.getElementById('jug-r-' + j).value = "";
+  }
+
   renderJugglerToday();
 }
 
 function renderJugglerToday() {
   var container = document.getElementById('juggler-today-list');
+  if(!container) return;
+
   if (!jugglerToday.length) {
     container.innerHTML = '<div style="color:#5a3d18; text-align:center; padding:1rem">No Juggler claims logged today.</div>';
     return;
@@ -503,6 +600,7 @@ function renderJugglerToday() {
 
 function renderJugglerHistory() {
   var container = document.getElementById('juggler-history-list');
+  if(!container) return;
   if (!jugglerHistory.length) {
     hide('juggler-history-card');
     return;
@@ -537,4 +635,13 @@ function renderJugglerHistory() {
 
     container.appendChild(wrapper);
   });
+}
+
+// ==========================================
+// MODULE 5: SAVANT MATRIX
+// ==========================================
+function renderSavantMatrix() {
+  var container = document.getElementById('savant-matrix-container');
+  if(!container) return;
+  container.innerHTML = '<div style="color:#9a7d4a; font-size:13px; text-align:center; padding:1rem;">Savant grid UI not yet implemented.</div>';
 }
