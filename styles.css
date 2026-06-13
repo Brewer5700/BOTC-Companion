@@ -44,7 +44,7 @@ button.danger:hover{background:#3d1515}
   max-width: 1040px;
   margin: 0 auto;
   display: grid;
-  grid-template-columns: 340px 1fr;
+  grid-template-columns: minmax(340px, auto) 1fr;
   gap: 1.5rem;
   align-items: start;
 }
@@ -97,7 +97,7 @@ button.danger:hover{background:#3d1515}
   width:320px;
   height:320px;
   margin:0 auto;
-  overflow:hidden;
+  overflow:visible;
   display:block;
   padding:0;
 }

@@ -56,13 +56,18 @@ function renderCircle(containerId, clickable){
 
   c.innerHTML = '';
 
-  var rect = c.getBoundingClientRect();
   var n = players.length;
   if(!n) return;
 
-  var cx = rect.width / 2;
-  var cy = rect.height / 2;
-  var r = Math.min(rect.width, rect.height) / 2 - 50;
+  var r = Math.max(110, n * 11.5);
+  var size = r * 2 + 80;
+
+  c.style.width = size + 'px';
+  c.style.height = size + 'px';
+  c.style.maxWidth = 'none';
+
+  var cx = size / 2;
+  var cy = size / 2;
 
   players.forEach(function(p, i){
     var angle = (2 * Math.PI * i / n) - Math.PI / 2;
@@ -71,8 +76,8 @@ function renderCircle(containerId, clickable){
 
     var tok = document.createElement('div');
     tok.className = 'token';
-    tok.style.left = x + 'px';
-    tok.style.top = y + 'px';
+    tok.style.left = ((x / size) * 100) + '%';
+    tok.style.top = ((y / size) * 100) + '%';
 
     var initials = p.name.split(' ').map(function(w){ return w[0] || ''; }).join('').slice(0, 2).toUpperCase();
 
