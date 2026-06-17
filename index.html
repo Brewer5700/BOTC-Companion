@@ -1,207 +1,207 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BOTC Unified Strategy Companion</title>
-  <link rel="stylesheet" href="styles.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BOTC Unified Strategy Companion</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <h2 style="position:absolute;left:-9999px">BOTC Unified Strategy Companion</h2>
-  <h1>☽ BOTC Companion Board ☾</h1>
-  <br>
+    <h2 style="position:absolute;left:-9999px">BOTC Unified Strategy Companion</h2>
+    <h1>☽ BOTC Companion Board ☾</h1>
+    <br>
 
-  <div id="phase-init">
-    <div class="card" style="max-width:420px;margin:0 auto">
-      <div class="section-label">Number of players</div>
-      <div class="flex">
-        <input type="number" id="player-count" min="5" max="20" value="10" style="width:80px">
-        <button class="primary" onclick="initPlayers()">Set up players →</button>
-      </div>
-    </div>
-  </div>
-
-  <div id="phase-setup" class="hidden">
-    <div style="max-width:640px;margin:0 auto;display:flex;flex-direction:column;gap:1rem">
-      <div class="card">
-        <div class="section-label" style="margin-bottom:0.75rem">Grimoire — player circle</div>
-        <div class="circle-wrap" id="circle-setup"></div>
-      </div>
-      <div class="card">
-        <div class="section-label" style="margin-bottom:0.75rem">Enter player names</div>
-        <div id="name-inputs" class="grid2"></div>
-        <div style="margin-top:1rem">
-          <button class="primary" onclick="startGame()" style="width:100%">Start game →</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div id="phase-track" class="hidden">
-    
-    <div class="global-status-bar">
-      <div class="card reality-banner" id="reality-banner" style="margin: 0; flex: 1;">
-        <span id="reality-banner-label">🔮 Logic Reality: <strong>Standard Rules</strong></span>
-        <button onclick="toggleVortexReality()" id="vortox-btn">Split Reality (Vortox)</button>
-      </div>
-      <div class="card global-day-card">
-        <div id="global-day-header">Day 1</div>
-      </div>
-    </div>
-
-    <div class="dashboard-layout">
-      
-      <div class="sidebar-col">
-        <div class="card">
-          <div class="circle-wrap" id="circle-track"></div>
-          <div class="voter-hint">Click tokens to log voters. Right-click to toggle Shroud (Alive/Dead).</div>
-        </div>
-        <div class="card flex" style="justify-content:space-between">
-          <button class="danger" onclick="showClearModal()">Clear</button>
-          <button class="primary" onclick="nextDay()">Next day →</button>
-        </div>
-      </div>
-
-      <div class="workspace-col">
-        <div class="tab-container">
-          <button class="tab-btn active" id="btn-tab-noms" onclick="switchTab('tab-noms')">Nominations</button>
-          <button class="tab-btn" id="btn-tab-empath" onclick="switchTab('tab-empath')">Empath</button>
-          <button class="tab-btn" id="btn-tab-gossip" onclick="switchTab('tab-gossip')">Gossip</button>
-          <button class="tab-btn" id="btn-tab-juggler" onclick="switchTab('tab-juggler')">Juggler</button>
-          <button class="tab-btn" id="btn-tab-savant" onclick="switchTab('tab-savant')">Savant Grid</button>
-        </div>
-
-        <div id="tab-noms" class="tab-content">
-          <div class="card">
-            <div class="section-label">Log a nomination</div>
-            <div class="grid2" style="margin-bottom:1rem">
-              <div class="flex-col">
-                <div class="section-label">Nominator</div>
-                <select id="sel-nominator"></select>
-              </div>
-              <div class="flex-col">
-                <div class="section-label">Nominee</div>
-                <select id="sel-nominee"></select>
-              </div>
+    <div id="phase-init">
+        <div class="card" style="max-width:420px;margin:0 auto">
+            <div class="section-label">Number of players</div>
+            <div class="flex">
+                <input type="number" id="player-count" min="5" max="20" value="10" style="width:80px">
+                <button class="primary" onclick="initPlayers()">Set up players →</button>
             </div>
-            <div id="voter-preview" style="font-size:13px;color:#9a7d4a;margin-bottom:0.75rem;min-height:18px">No voters selected</div>
-            <button class="primary" onclick="addNomination()" style="width:100%">Add nomination</button>
-          </div>
-          <br>
-          <div class="card">
-            <div class="section-label">Today's history</div>
-            <div id="nom-list"></div>
-            <div id="daily-summary" class="summary-box hidden">
-              <div class="summary-title">☽ Nominated today</div>
-              <div class="pill-group" id="summary-nominators"></div>
-              <div class="summary-title" style="margin-top:0.75rem">☾ Voted today</div>
-              <div class="pill-group" id="summary-voters"></div>
-            </div>
-          </div>
-          <br>
-          <div class="card hidden" id="nom-history-card">
-            <div class="section-label">Previous Days History</div>
-            <div id="nom-history-list"></div>
-          </div>
         </div>
+    </div>
 
-        <div id="tab-empath" class="tab-content hidden">
-          <div class="card">
-            <div class="section-label">Log Empath Statement</div>
-            <div class="grid2" style="margin-bottom: 1rem;">
-              <div class="flex-col">
-                <div class="section-label">Select Empath</div>
-                <select id="empath-player"></select>
-              </div>
-              <div class="flex-col">
-                <div class="section-label">Result Got</div>
-                <div class="flex">
-                  <input type="number" id="empath-result" min="0" max="2" value="0" style="width:70px">
-                  <button class="primary" onclick="addEmpathClaim()">Log Claim</button>
+    <div id="phase-setup" class="hidden">
+        <div style="max-width:640px;margin:0 auto;display:flex;flex-direction:column;gap:1rem">
+            <div class="card">
+                <div class="section-label" style="margin-bottom:0.75rem">Grimoire — player circle</div>
+                <div class="circle-wrap" id="circle-setup"></div>
+            </div>kwrit
+            <div class="card">
+                <div class="section-label" style="margin-bottom:0.75rem">Enter player names</div>
+                <div id="name-inputs" class="grid2"></div>
+                <div style="margin-top:1rem">
+                    <button class="primary" onclick="startGame()" style="width:100%">Start game →</button>
                 </div>
-              </div>
             </div>
-          </div>
-          <br>
-          <div class="card">
-            <div class="section-label">Today's Empath Records</div>
-            <div id="empath-today-list"></div>
-          </div>
-          <br>
-          <div class="card hidden" id="empath-history-card">
-            <div class="section-label">Previous Days History</div>
-            <div id="empath-history-list"></div>
-          </div>
         </div>
-
-        <div id="tab-gossip" class="tab-content hidden">
-          <div class="card">
-            <div class="section-label">Log Gossip Statement</div>
-            <div style="display:grid; grid-template-columns: 160px 1fr auto; gap:10px;">
-              <select id="gossip-player"></select>
-              <input type="text" id="gossip-text" placeholder="e.g., There is a minion sitting next to the dead">
-              <button class="primary" onclick="addGossipClaim()">Log Gossip</button>
-            </div>
-          </div>
-          <br>
-          <div class="card">
-            <div class="section-label">Today's Gossip Records</div>
-            <div id="gossip-today-list"></div>
-          </div>
-          <br>
-          <div class="card hidden" id="gossip-history-card">
-            <div class="section-label">Previous Days History</div>
-            <div id="gossip-history-list"></div>
-          </div>
-        </div>
-
-        <div id="tab-juggler" class="tab-content hidden">
-          <div class="card">
-            <div class="section-label">Log Juggler Claims</div>
-            <div style="margin-bottom: 1rem; display: flex; align-items: center; gap: 15px;">
-              <div style="width: 160px;"><div class="section-label">The Juggler</div><select id="juggler-player"></select></div>
-              <div style="flex: 1; padding-top: 15px; color: #9a7d4a; font-size: 12px;">Fill out up to 5 guess statements below. Leaving fields empty is fine.</div>
-            </div>
-            
-            <div class="flex-col" id="juggler-guesses-inputs" style="gap: 8px; margin-bottom: 1.25rem;"></div>
-            <button class="primary" onclick="addJugglerClaim()" style="width: 100%">Log Juggling Event</button>
-          </div>
-          <br>
-          <div class="card">
-            <div class="section-label">Today's Juggling Records</div>
-            <div id="juggler-today-list"></div>
-          </div>
-          <br>
-          <div class="card hidden" id="juggler-history-card">
-            <div class="section-label">Previous Days History</div>
-            <div id="juggler-history-list"></div>
-          </div>
-        </div>
-
-        <div id="tab-savant" class="tab-content hidden">
-          <div class="card">
-            <div class="section-label">Savant Deduction Matrix</div>
-            <p style="font-size:12px; color:#9a7d4a; margin-bottom:1rem;">Marking a row statement as True forces its paired statement to invert to False automatically.</p>
-            <div id="savant-matrix-container"></div>
-          </div>
-        </div>
-
-      </div>
     </div>
-  </div>
 
-  <div id="clear-modal" class="modal-bg hidden">
-    <div class="modal">
-      <h3>Clear game data</h3>
-      <p>Do you want to keep the current player list for a new game, or go back and edit the players?</p>
-      <div class="modal-btns">
-        <button class="primary" onclick="clearKeepPlayers()">Keep players — start new game</button>
-        <button onclick="clearEditPlayers()">Edit players</button>
-        <button class="danger" onclick="hideClearModal()">Cancel</button>
-      </div>
+    <div id="phase-track" class="hidden">
+
+        <div class="global-status-bar">
+            <div class="card reality-banner" id="reality-banner" style="margin: 0; flex: 1;">
+                <span id="reality-banner-label">🔮 Logic Reality: <strong>Standard Rules</strong></span>
+                <button onclick="toggleVortexReality()" id="vortox-btn">Split Reality (Vortox)</button>
+            </div>
+            <div class="card global-day-card">
+                <div id="global-day-header">Day 1</div>
+            </div>
+        </div>
+
+        <div class="dashboard-layout">
+
+            <div class="sidebar-col">
+                <div class="card">
+                    <div class="circle-wrap" id="circle-track"></div>
+                    <div class="voter-hint">Click tokens to log voters. Right-click to toggle Shroud (Alive/Dead).</div>
+                </div>
+                <div class="card flex" style="justify-content:space-between">
+                    <button class="danger" onclick="showClearModal()">Clear</button>
+                    <button class="primary" onclick="nextDay()">Next day →</button>
+                </div>
+            </div>
+
+            <div class="workspace-col">
+                <div class="tab-container">
+                    <button class="tab-btn active" id="btn-tab-noms" onclick="switchTab('tab-noms')">Nominations</button>
+                    <button class="tab-btn" id="btn-tab-empath" onclick="switchTab('tab-empath')">Empath</button>
+                    <button class="tab-btn" id="btn-tab-gossip" onclick="switchTab('tab-gossip')">Gossip</button>
+                    <button class="tab-btn" id="btn-tab-juggler" onclick="switchTab('tab-juggler')">Juggler</button>
+                    <button class="tab-btn" id="btn-tab-savant" onclick="switchTab('tab-savant')">Savant Grid</button>
+                </div>
+
+                <div id="tab-noms" class="tab-content">
+                    <div class="card">
+                        <div class="section-label">Log a nomination</div>
+                        <div class="grid2" style="margin-bottom:1rem">
+                            <div class="flex-col">
+                                <div class="section-label">Nominator</div>
+                                <select id="sel-nominator"></select>
+                            </div>
+                            <div class="flex-col">
+                                <div class="section-label">Nominee</div>
+                                <select id="sel-nominee"></select>
+                            </div>
+                        </div>
+                        <div id="voter-preview" style="font-size:13px;color:#9a7d4a;margin-bottom:0.75rem;min-height:18px">No voters selected</div>
+                        <button class="primary" onclick="addNomination()" style="width:100%">Add nomination</button>
+                    </div>
+                    <br>
+                    <div class="card">
+                        <div class="section-label">Today's history</div>
+                        <div id="nom-list"></div>
+                        <div id="daily-summary" class="summary-box hidden">
+                            <div class="summary-title">☽ Nominated today</div>
+                            <div class="pill-group" id="summary-nominators"></div>
+                            <div class="summary-title" style="margin-top:0.75rem">☾ Voted today</div>
+                            <div class="pill-group" id="summary-voters"></div>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="card hidden" id="nom-history-card">
+                        <div class="section-label">Previous Days History</div>
+                        <div id="nom-history-list"></div>
+                    </div>
+                </div>
+
+                <div id="tab-empath" class="tab-content hidden">
+                    <div class="card">
+                        <div class="section-label">Log Empath Statement</div>
+                        <div class="grid2" style="margin-bottom: 1rem;">
+                            <div class="flex-col">
+                                <div class="section-label">Select Empath</div>
+                                <select id="empath-player"></select>
+                            </div>
+                            <div class="flex-col">
+                                <div class="section-label">Result Got</div>
+                                <div class="flex">
+                                    <input type="number" id="empath-result" min="0" max="2" value="0" style="width:70px">
+                                    <button class="primary" onclick="addEmpathClaim()">Log Claim</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="card">
+                        <div class="section-label">Today's Empath Records</div>
+                        <div id="empath-today-list"></div>
+                    </div>
+                    <br>
+                    <div class="card hidden" id="empath-history-card">
+                        <div class="section-label">Previous Days History</div>
+                        <div id="empath-history-list"></div>
+                    </div>
+                </div>
+
+                <div id="tab-gossip" class="tab-content hidden">
+                    <div class="card">
+                        <div class="section-label">Log Gossip Statement</div>
+                        <div style="display:grid; grid-template-columns: 160px 1fr auto; gap:10px;">
+                            <select id="gossip-player"></select>
+                            <input type="text" id="gossip-text" placeholder="e.g., There is a minion sitting next to the dead">
+                            <button class="primary" onclick="addGossipClaim()">Log Gossip</button>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="card">
+                        <div class="section-label">Today's Gossip Records</div>
+                        <div id="gossip-today-list"></div>
+                    </div>
+                    <br>
+                    <div class="card hidden" id="gossip-history-card">
+                        <div class="section-label">Previous Days History</div>
+                        <div id="gossip-history-list"></div>
+                    </div>
+                </div>
+
+                <div id="tab-juggler" class="tab-content hidden">
+                    <div class="card">
+                        <div class="section-label">Log Juggler Claims</div>
+                        <div style="margin-bottom: 1rem; display: flex; align-items: center; gap: 15px;">
+                            <div style="width: 160px;"><div class="section-label">The Juggler</div><select id="juggler-player"></select></div>
+                            <div style="flex: 1; padding-top: 15px; color: #9a7d4a; font-size: 12px;">Fill out up to 5 guess statements below. Leaving fields empty is fine.</div>
+                        </div>
+
+                        <div class="flex-col" id="juggler-guesses-inputs" style="gap: 8px; margin-bottom: 1.25rem;"></div>
+                        <button class="primary" onclick="addJugglerClaim()" style="width: 100%">Log Juggling Event</button>
+                    </div>
+                    <br>
+                    <div class="card">
+                        <div class="section-label">Today's Juggling Records</div>
+                        <div id="juggler-today-list"></div>
+                    </div>
+                    <br>
+                    <div class="card hidden" id="juggler-history-card">
+                        <div class="section-label">Previous Days History</div>
+                        <div id="juggler-history-list"></div>
+                    </div>
+                </div>
+
+                <div id="tab-savant" class="tab-content hidden">
+                    <div class="card">
+                        <div class="section-label">Savant Deduction Matrix</div>
+                        <p style="font-size:12px; color:#9a7d4a; margin-bottom:1rem;">Marking a row statement as True forces its paired statement to invert to False automatically.</p>
+                        <div id="savant-matrix-container"></div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
     </div>
-  </div>
 
-  <script src="script.js"></script>
+    <div id="clear-modal" class="modal-bg hidden">
+        <div class="modal">
+            <h3>Clear game data</h3>
+            <p>Do you want to keep the current player list for a new game, or go back and edit the players?</p>
+            <div class="modal-btns">
+                <button class="primary" onclick="clearKeepPlayers()">Keep players — start new game</button>
+                <button onclick="clearEditPlayers()">Edit players</button>
+                <button class="danger" onclick="hideClearModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
 </body>
 </html>

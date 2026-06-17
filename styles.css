@@ -18,93 +18,93 @@ button.danger:hover{background:#3d1515}
 
 /* Unified Layout Architecture */
 .global-status-bar {
-  max-width: 1040px;
-  margin: 0 auto 1.25rem auto;
-  display: flex;
-  gap: 1.5rem;
-  align-items: center;
+    max-width: 1040px;
+    margin: 0 auto 1.25rem auto;
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
 }
 .global-day-card {
-  background: #2a1c0e;
-  border-color: #8a5f28;
-  padding: 10px 2rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  white-space: nowrap;
+    background: #2a1c0e;
+    border-color: #8a5f28;
+    padding: 10px 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
 }
 #global-day-header {
-  font-size: 20px;
-  font-weight: bold;
-  color: #f5dfa0;
-  letter-spacing: 1px;
+    font-size: 20px;
+    font-weight: bold;
+    color: #f5dfa0;
+    letter-spacing: 1px;
 }
 
 .dashboard-layout {
-  max-width: 1040px;
-  margin: 0 auto;
-  display: grid;
-  grid-template-columns: minmax(340px, auto) 1fr;
-  gap: 1.5rem;
-  align-items: start;
+    max-width: 1040px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: minmax(340px, auto) 1fr;
+    gap: 1.5rem;
+    align-items: start;
 }
 .sidebar-col { display: flex; flex-direction: column; gap: 1rem; }
 .workspace-col { display: flex; flex-direction: column; }
 
 /* Fixed Navigation Tab Bar */
 .tab-container {
-  display: flex;
-  gap: 4px;
-  margin-bottom: 1rem;
-  border-bottom: 1px solid #4a3314;
+    display: flex;
+    gap: 4px;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid #4a3314;
 }
 .tab-btn {
-  background: transparent;
-  border: none;
-  border-radius: 8px 8px 0 0;
-  color: #9a7d4a;
-  padding: 10px 16px;
-  font-size: 13px;
-  cursor: pointer;
-  box-sizing: border-box;
-  height: 38px; /* Strict height boundary avoids sizes flashing/changing layout bounds */
+    background: transparent;
+    border: none;
+    border-radius: 8px 8px 0 0;
+    color: #9a7d4a;
+    padding: 10px 16px;
+    font-size: 13px;
+    cursor: pointer;
+    box-sizing: border-box;
+    height: 38px; /* Strict height boundary avoids sizes flashing/changing layout bounds */
 }
 .tab-btn:hover { background: #2e1c08; color: #e8d5b0; }
 .tab-btn.active {
-  background: #221508;
-  border: 0.5px solid #5a3d18;
-  border-bottom: 2px solid #221508;
-  color: #f5dfa0;
-  font-weight: 500;
+    background: #221508;
+    border: 0.5px solid #5a3d18;
+    border-bottom: 2px solid #221508;
+    color: #f5dfa0;
+    font-weight: 500;
 }
 .tab-content { animation: fadeIn 0.1s ease-out; }
 @keyframes fadeIn { from{opacity:0} to{opacity:1} }
 
 .reality-banner {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  font-size: 13px;
-  background: #231111;
-  border: 0.5px solid #662222;
-  border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 13px;
+    background: #231111;
+    border: 0.5px solid #662222;
+    border-radius: 8px;
 }
 .reality-banner.vortox-active { background: #401010; border-color: #d66f6f; }
 
 /* Structural Cards */
 .circle-wrap{
-  position:relative;
-  width:320px;
-  height:320px;
-  margin:0 auto;
-  overflow:visible;
-  display:block;
-  padding:0;
+    position:relative;
+    width:320px;
+    height:320px;
+    margin:0 auto;
+    overflow:visible;
+    display:block;
+    padding:0;
 }
 #circle-track.circle-wrap{
-  width:100%;
-  max-width:320px;
-  aspect-ratio:1 / 1;
+    width:100%;
+    max-width:320px;
+    aspect-ratio:1 / 1;
 }
 .circle-wrap .token{transform:translate(-50%,-50%)}
 .token{position:absolute;display:flex;flex-direction:column;align-items:center;gap:3px;transform:translate(-50%,-50%)}
